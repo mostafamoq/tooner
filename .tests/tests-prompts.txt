@@ -1,0 +1,139 @@
+test 2:
+Use tooner to compress this larger dataset:
+  [
+    {"id": 1, "product": "Laptop", "price": 999.99, "stock": 45, "category": "electronics"},
+    {"id": 2, "product": "Mouse", "price": 29.99, "stock": 200, "category": "accessories"},
+    {"id": 3, "product": "Keyboard", "price": 79.99, "stock": 150, "category": "accessories"},
+    {"id": 4, "product": "Monitor", "price": 299.99, "stock": 80, "category": "electronics"},
+    {"id": 5, "product": "Webcam", "price": 89.99, "stock": 120, "category": "electronics"}
+  ]
+
+response:
+I'll compress this product dataset for you!Excellent compression! Here are the results:
+
+**Original JSON format (144 tokens):**
+```json
+[
+  {"id": 1, "product": "Laptop", "price": 999.99, "stock": 45, "category": "electronics"},
+  {"id": 2, "product": "Mouse", "price": 29.99, "stock": 200, "category": "accessories"},
+  {"id": 3, "product": "Keyboard", "price": 79.99, "stock": 150, "category": "accessories"},
+  {"id": 4, "product": "Monitor", "price": 299.99, "stock": 80, "category": "electronics"},
+  {"id": 5, "product": "Webcam", "price": 89.99, "stock": 120, "category": "electronics"}
+]
+```
+
+**Compressed Toon format (51 tokens):**
+```
+products[5]{id,product,price,stock,category}:
+ 1,Laptop,999.99,45,electronics
+ 2,Mouse,29.99,200,accessories
+ 3,Keyboard,79.99,150,accessories
+ 4,Monitor,299.99,80,electronics
+ 5,Webcam,89.99,120,electronics
+```
+
+**Token Savings:**
+- **64.58% reduction** (93 tokens saved!)
+- Original: 144 tokens
+- Compressed: 51 tokens
+
+This is even better compression than the first example! The larger and more uniform your dataset, the more tokens you save with Toon format. The repetitive JSON structure (field names, quotes, braces, commas) is replaced with a simple CSV-like format after defining the schema once.
+
+
+========================================================================================================================
+test 3:
+Use tooner to analyze if I should use Toon compression for this data:
+  [
+    {"timestamp": "2025-01-11T10:00:00", "level": "INFO", "message": "Server started"},
+    {"timestamp": "2025-01-11T10:01:00", "level": "ERROR", "message": "Connection failed"},
+    {"timestamp": "2025-01-11T10:02:00", "level": "INFO", "message": "Retrying"},
+    {"timestamp": "2025-01-11T10:03:00", "level": "INFO", "message": "Success"}
+  ]
+
+response:
+I'll analyze whether Toon compression would be beneficial for this log data!**Analysis Result: ✅ Yes, use Toon compression!**
+
+Here's what the analysis found:
+
+**Data Characteristics:**
+- **Uniform structure**: ✅ All objects have the same fields (timestamp, level, message)
+- **Array size**: 4 items
+- **Field count**: 3 fields per object
+- **Estimated savings**: ~52% token reduction
+
+**Recommendation:**
+This log data is ideal for Toon compression. Since all entries have the same structure (uniform array), you'll save approximately **52% of tokens** by using Toon format instead of JSON.
+
+**Why it works well:**
+- Consistent schema across all log entries
+- Repetitive field names that only need to be defined once
+- Multiple records that benefit from the CSV-like row format
+
+This is perfect for scenarios like:
+- Log files
+- Database query results
+- API responses with multiple similar records
+- Any dataset where objects share the same structure
+
+Would you like me to go ahead and compress it to show you the actual result?
+
+
+========================================================================================================================
+test 4:
+Use tooner to compare JSON vs Toon format and recommend which to use:
+  [
+    {"user_id": 101, "username": "alice2025", "email": "alice@example.com", "verified": true},
+    {"user_id": 102, "username": "bob_dev", "email": "bob@example.com", "verified": true},
+    {"user_id": 103, "username": "carol_qa", "email": "carol@example.com", "verified": false}
+  ]
+
+response:
+I'll compare both formats and give you a recommendation!**Comparison Results:**
+
+## JSON Format (84 tokens):
+```json
+[
+  {
+    "user_id": 101,
+    "username": "alice2025",
+    "email": "alice@example.com",
+    "verified": true
+  },
+  {
+    "user_id": 102,
+    "username": "bob_dev",
+    "email": "bob@example.com",
+    "verified": true
+  },
+  {
+    "user_id": 103,
+    "username": "carol_qa",
+    "email": "carol@example.com",
+    "verified": false
+  }
+]
+```
+
+## Toon Format (38 tokens):
+```
+users[3]{user_id,username,email,verified}:
+ 101,alice2025,alice@example.com,True
+ 102,bob_dev,bob@example.com,True
+ 103,carol_qa,carol@example.com,False
+```
+
+## Token Analysis:
+- **JSON tokens**: 84
+- **Toon tokens**: 38
+- **Tokens saved**: 46
+- **Savings**: 54.76%
+
+## 🎯 Recommendation: **Use Toon Format**
+
+**Why Toon is better here:**
+- Uniform data structure (all users have the same fields)
+- More than 50% token savings
+- Data remains fully readable and parseable
+- Perfect for API responses, database dumps, or any structured user data
+
+The Toon format eliminates all the repetitive JSON syntax (braces, quotes around field names, etc.) while keeping the data clean and structured. This is ideal for your use case!

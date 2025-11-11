@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  tooner-mcp:
+    build: .
+    image: tooner-mcp:latest
+    container_name: tooner-mcp
+    stdin_open: true
+    tty: true
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
