@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Tooner MCP Server - Compress structured data using Toon format to reduce LLM token usage."""
+"""Tooner MCP Test Server - Test/demo server for exploring Toon compression tools.
+
+This MCP server is for testing and exploration only.
+For production use, install the Tooner hook for Claude Code instead.
+"""
 
 import json
 from typing import Any, Dict, List, Union

@@ -1,7 +1,7 @@
 [project]
-name = "tooner-mcp"
+name = "tooner"
 version = "0.1.0"
-description = "MCP server for Toon format compression - reduce LLM token usage"
+description = "Claude Code hook for automatic JSON compression using Toon format - reduce LLM token usage by up to 60%"
 authors = [
     {name = "Mostafa", email = "your-email@example.com"}
 ]

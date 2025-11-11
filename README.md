@@ -1,20 +1,20 @@
-# Tooner MCP Server
+# Tooner - Claude Code Hook
 
-**Reduce LLM token usage by up to 60% with Toon format compression**
+**Reduce LLM token usage by up to 60% with automatic JSON compression**
 
-Tooner is a Model Context Protocol (MCP) server that automatically compresses structured JSON data into the efficient [Toon format](https://github.com/toon-format/toon) before sending to LLMs. Perfect for working with large datasets, API responses, and tabular data.
+Tooner is a Claude Code hook that automatically compresses structured JSON data into the efficient [Toon format](https://github.com/toon-format/toon) before sending to LLMs. Perfect for working with large datasets, API responses, and tabular data.
 
 ---
 
-**📚 Quick Navigation:** [Installation](#-installation) · [Testing](#-testing-with-claude-desktop) · [How It Works](#-how-it-works) · [Development](#-development) · [Contributing](#-contributing)
+**📚 Quick Navigation:** [Installation](#-installation) · [Testing](#-testing-with-mcp-server-optional) · [How It Works](#-how-it-works) · [Development](#-development) · [Contributing](#-contributing)
 
 ---
 
 ## ⚡ Get Started
 
-**For Claude Code users:** [Install the hook](#-installation) to automatically compress JSON data and save tokens.
+**Install the hook:** Follow the [installation steps](#-installation) to automatically compress JSON data in Claude Code.
 
-**Want to test first?** [Try it with Claude Desktop](#-testing-with-claude-desktop) to explore the compression tools.
+**Want to test the compression first?** [Use the MCP test server](#-testing-with-mcp-server-optional) with Claude Desktop to explore how Toon compression works.
 
 ---
 
@@ -40,11 +40,11 @@ data[3]{id,name,role,status}:
 
 ## 📦 Installation
 
-### Claude Code Hook (Automatic Compression)
+### Install the Hook
 
-The hook automatically compresses JSON in your prompts **before** they reach the LLM, saving tokens on every request.
+Install the Tooner hook to automatically compress JSON in your prompts **before** they reach the LLM, saving tokens on every request.
 
-**[→ Skip to Testing](#-testing-with-claude-desktop)**
+**[→ Skip to Testing](#-testing-with-mcp-server-optional)**
 
 #### Step 1: Copy the hook file
 ```bash
@@ -101,11 +101,11 @@ tail -f ~/.claude/tooner_hook.log
 
 ---
 
-## 🧪 Testing with Claude Desktop
+## 🧪 Testing with MCP Server (Optional)
 
-Want to test the Tooner MCP server and its compression tools? Use Claude Desktop with Docker to explore the 4 MCP tools interactively.
+Want to test how Toon compression works before installing the hook? This optional MCP server lets you explore the compression tools interactively using Claude Desktop.
 
-**Note:** This is for **testing and exploring** the tools only. For production use with Claude Code, use the [hook installation](#-installation) above.
+**Note:** This MCP server is for **testing and exploration only**. For automatic compression in Claude Code, use the [hook installation](#-installation) above.
 
 **[← Back to Installation](#-installation)**
 
@@ -181,13 +181,13 @@ pytest tests/ -v
 ```
 tooner/
 ├── hooks/
-│   └── compress_prompt.py      # Claude Code hook for automatic compression
+│   └── compress_prompt.py      # Main hook - automatic JSON compression
 ├── src/tooner/
-│   └── server.py              # MCP server with compression tools
+│   └── server.py              # MCP test server (optional, for testing)
 ├── tests/
 │   └── test_server.py         # Test suite
-├── Dockerfile                 # Docker container definition
-├── docker-compose.yml         # Docker Compose config
+├── Dockerfile                 # Docker container (for MCP test server)
+├── docker-compose.yml         # Docker Compose config (for testing)
 └── pyproject.toml            # Python project metadata
 ```
 

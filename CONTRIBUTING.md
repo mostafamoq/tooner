@@ -1,6 +1,6 @@
-# Contributing to Tooner MCP
+# Contributing to Tooner
 
-Thank you for your interest in contributing to Tooner MCP! This tool aims to help the Docker and AI community reduce LLM token costs.
+Thank you for your interest in contributing to Tooner! This Claude Code hook helps users reduce LLM token costs through automatic JSON compression.
 
 ## Getting Started
 
@@ -37,7 +37,14 @@ ruff check src/ tests/ --fix
 
 ### Testing Locally
 
-Test the MCP server locally:
+Test the hook directly:
+
+```bash
+# Test the hook with sample data
+echo '{"prompt": "test [{\\"a\\":1},{\\"a\\":2},{\\"a\\":3}]"}' | python hooks/compress_prompt.py
+```
+
+Test the MCP test server (optional):
 
 ```bash
 python src/tooner/server.py
