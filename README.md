@@ -50,7 +50,7 @@ The hook automatically compresses JSON in your prompts **before** they reach the
 ```bash
 mkdir -p ~/.claude/hooks
 curl -o ~/.claude/hooks/compress_prompt.py \
-  https://raw.githubusercontent.com/YOUR_USERNAME/tooner/main/hooks/compress_prompt.py
+  https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt.py
 chmod +x ~/.claude/hooks/compress_prompt.py
 ```
 
@@ -65,7 +65,7 @@ Edit or create `~/.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/YOUR_USERNAME/.claude/hooks/compress_prompt.py"
+            "command": "~/.claude/hooks/compress_prompt.py"
           }
         ]
       }
@@ -74,7 +74,7 @@ Edit or create `~/.claude/settings.json`:
 }
 ```
 
-**Replace `/Users/YOUR_USERNAME/` with your actual home path.**
+**Note:** The `~` automatically expands to your home directory.
 
 #### Step 3: Test the hook
 
@@ -111,7 +111,7 @@ Want to test the Tooner MCP server and its compression tools? Use Claude Desktop
 
 ### Step 1: Build the Docker image
 ```bash
-git clone https://github.com/YOUR_USERNAME/tooner.git
+git clone https://github.com/mostafamoq/tooner.git
 cd tooner
 docker build -t tooner-mcp:latest .
 ```
@@ -233,7 +233,7 @@ Contributions welcome! Please:
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/tooner.git
+git clone https://github.com/mostafamoq/tooner.git
 cd tooner
 
 # Create virtual environment
@@ -259,8 +259,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📬 Support
 
-- **Issues:** [GitHub Issues](https://github.com/YOUR_USERNAME/tooner/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/YOUR_USERNAME/tooner/discussions)
+- **Issues:** [GitHub Issues](https://github.com/mostafamoq/tooner/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/mostafamoq/tooner/discussions)
 
 ## ⭐ Star History
 
