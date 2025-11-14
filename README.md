@@ -176,10 +176,12 @@ pip install --user toon-python
 
 3. **Test the hook manually:**
    ```bash
-   printf '{"prompt": "Test [{\\"id\\": 1, \\"name\\": \\"Alice\\"}, {\\"id\\": 2, \\"name\\": \\"Bob\\"}, {\\"id\\": 3, \\"name\\": \\"Carol\\"}]"}' | ~/.claude/hooks/compress_prompt.py
+   printf '{"prompt": "Analyze: [{\\"id\\": 1, \\"name\\": \\"Alice\\"}, {\\"id\\": 2, \\"name\\": \\"Bob\\"}, {\\"id\\": 3, \\"name\\": \\"Carol\\"}]"}' | ~/.claude/hooks/compress_prompt.py
    ```
 
    You should see compressed output with token savings.
+
+   **Note:** If nothing is returned, the data doesn't meet compression criteria (needs >30% savings). Try with more fields or more items.
 
 4. **Check the log file:**
    ```bash
@@ -253,8 +255,10 @@ Tooner works best with **uniform arrays** (arrays where all objects have the sam
 
 **Minimum requirements for compression:**
 - Array with 3+ items
-- All objects have the same fields
-- Savings > 10% estimated
+- All objects have the same fields (uniform structure)
+- Savings > 30% tokens
+
+**Example:** `[{"id": 1}, {"id": 2}, {"id": 3}]` won't compress (only 25% savings), but `[{"id": 1, "name": "Alice", "email": "alice@example.com"}, ...]` will compress (typically 40-60% savings).
 
 ## 🛠️ Development
 
