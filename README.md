@@ -40,17 +40,42 @@ data[3]{id,name,role,status}:
 
 ## 📦 Installation
 
-### Install the Hook
+### Option 1: Automatic Installation (Recommended)
 
-Install the Tooner hook to automatically compress JSON in your prompts **before** they reach the LLM, saving tokens on every request.
+The easiest way to install Tooner is using our installation script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mostafamoq/tooner/main/install.sh | bash
+```
+
+Or if you've cloned the repository:
+
+```bash
+git clone https://github.com/mostafamoq/tooner.git
+cd tooner
+./install.sh
+```
+
+The installer will:
+- ✅ Create the necessary directories
+- ✅ Download and install the hook file
+- ✅ Configure your `settings.json` automatically
+- ✅ Set proper file permissions
+- ✅ Backup your existing settings
 
 **[→ Skip to Testing](#-testing-with-mcp-server-optional)**
+
+---
+
+### Option 2: Manual Installation
+
+If you prefer to install manually:
 
 #### Step 1: Copy the hook file
 ```bash
 mkdir -p ~/.claude/hooks
 curl -o ~/.claude/hooks/compress_prompt.py \
-  https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt.py
+  https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt_standalone.py
 chmod +x ~/.claude/hooks/compress_prompt.py
 ```
 
@@ -76,7 +101,11 @@ Edit or create `~/.claude/settings.json`:
 
 **Note:** The `~` automatically expands to your home directory.
 
-#### Step 3: Test the hook
+---
+
+### Testing the Installation
+
+#### Step 1: Test the hook
 
 Start a new Claude Code session and paste:
 ```
@@ -90,7 +119,7 @@ Analyze this data:
 
 You'll see a message about compression, then Claude will analyze the compressed data!
 
-#### Step 4: Monitor activity (Optional)
+#### Step 2: Monitor activity (Optional)
 
 Watch hook activity in real-time:
 ```bash
@@ -98,6 +127,30 @@ Watch hook activity in real-time:
 > ~/.claude/tooner_hook.log
 tail -f ~/.claude/tooner_hook.log
 ```
+
+#### Troubleshooting
+
+If the hook isn't working:
+
+1. **Check the hook file exists:**
+   ```bash
+   ls -la ~/.claude/hooks/compress_prompt.py
+   ```
+
+2. **Test the hook manually:**
+   ```bash
+   echo '{"prompt": "Test [{\"id\": 1}]"}' | ~/.claude/hooks/compress_prompt.py
+   ```
+
+3. **Check the log file:**
+   ```bash
+   cat ~/.claude/tooner_hook.log
+   ```
+
+4. **Verify settings.json syntax:**
+   ```bash
+   python3 -m json.tool ~/.claude/settings.json
+   ```
 
 ---
 
