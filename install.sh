@@ -38,17 +38,41 @@ mkdir -p "$HOOKS_DIR"
 echo -e "${GREEN}✓${RESET} Created $HOOKS_DIR"
 
 echo ""
-echo -e "${BOLD}Step 2:${RESET} Downloading hook file..."
+echo -e "${BOLD}Step 2:${RESET} Installing toon-python library..."
+
+# Check if pip3 or pip is available
+if command -v pip3 &> /dev/null; then
+    PIP_CMD="pip3"
+elif command -v pip &> /dev/null; then
+    PIP_CMD="pip"
+else
+    echo -e "${RED}Error: pip is required but not found${RESET}"
+    exit 1
+fi
+
+# Install toon-python
+echo -e "Installing official toon-python library..."
+$PIP_CMD install -q toon-python || {
+    echo -e "${YELLOW}Warning: Failed to install globally, trying with --user${RESET}"
+    $PIP_CMD install --user -q toon-python || {
+        echo -e "${RED}Error: Failed to install toon-python${RESET}"
+        exit 1
+    }
+}
+echo -e "${GREEN}✓${RESET} toon-python library installed"
+
+echo ""
+echo -e "${BOLD}Step 3:${RESET} Downloading hook file..."
 
 # Check if we're in the tooner repo or need to download
-if [[ -f "hooks/compress_prompt_standalone.py" ]]; then
+if [[ -f "hooks/compress_prompt.py" ]]; then
     # Running from repo directory
     echo -e "${YELLOW}Found local hook file, using it...${RESET}"
-    cp "hooks/compress_prompt_standalone.py" "$HOOK_FILE"
+    cp "hooks/compress_prompt.py" "$HOOK_FILE"
 else
     # Download from GitHub
     echo -e "Downloading from GitHub..."
-    HOOK_URL="https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt_standalone.py"
+    HOOK_URL="https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt.py"
 
     if command -v curl &> /dev/null; then
         curl -fsSL "$HOOK_URL" -o "$HOOK_FILE"
@@ -63,12 +87,12 @@ fi
 echo -e "${GREEN}✓${RESET} Hook file installed to $HOOK_FILE"
 
 echo ""
-echo -e "${BOLD}Step 3:${RESET} Setting permissions..."
+echo -e "${BOLD}Step 4:${RESET} Setting permissions..."
 chmod +x "$HOOK_FILE"
 echo -e "${GREEN}✓${RESET} Made hook executable"
 
 echo ""
-echo -e "${BOLD}Step 4:${RESET} Configuring Claude Code settings..."
+echo -e "${BOLD}Step 5:${RESET} Configuring Claude Code settings..."
 
 # Check if settings.json exists
 if [[ -f "$SETTINGS_FILE" ]]; then
@@ -167,15 +191,18 @@ echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo -e "${BOLD}Next Steps:${RESET}"
 echo ""
-echo -e "1. ${BOLD}Test the hook:${RESET}"
+echo -e "1. ${BOLD}Test the hook manually (optional):${RESET}"
+echo -e "   ${YELLOW}printf '{\"prompt\": \"Test data: [{\\\\\"id\\\\\": 1}, {\\\\\"id\\\\\": 2}, {\\\\\"id\\\\\": 3}]\"}' | ~/.claude/hooks/compress_prompt.py${RESET}"
+echo -e ""
+echo -e "2. ${BOLD}Test in Claude Code:${RESET}"
 echo -e "   Start a new Claude Code session and paste:"
 echo -e "   ${YELLOW}Analyze this data:"
-echo -e '   [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]'
+echo -e '   [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}, {"id": 3, "name": "Carol"}]'
 echo -e "${RESET}"
-echo -e "2. ${BOLD}Monitor activity (optional):${RESET}"
+echo -e "3. ${BOLD}Monitor activity (optional):${RESET}"
 echo -e "   ${YELLOW}tail -f ~/.claude/tooner_hook.log${RESET}"
 echo ""
-echo -e "3. ${BOLD}Uninstall (if needed):${RESET}"
+echo -e "4. ${BOLD}Uninstall (if needed):${RESET}"
 echo -e "   ${YELLOW}rm $HOOK_FILE${RESET}"
 echo -e "   Then remove the hook from $SETTINGS_FILE"
 echo ""

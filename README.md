@@ -2,7 +2,7 @@
 
 **Reduce LLM token usage by up to 60% with automatic JSON compression**
 
-Tooner is a Claude Code hook that automatically compresses structured JSON data into the efficient [Toon format](https://github.com/toon-format/toon) before sending to LLMs. Perfect for working with large datasets, API responses, and tabular data.
+Tooner is a Claude Code hook that automatically compresses structured JSON data into the efficient [Toon format](https://github.com/toon-format/toon) before sending to LLMs. Uses the official [toon-python library](https://github.com/toon-format/toon-python) for compression. Perfect for working with large datasets, API responses, and tabular data.
 
 ---
 
@@ -40,15 +40,21 @@ data[3]{id,name,role,status}:
 
 ## 📦 Installation
 
-### Option 1: Automatic Installation (Recommended)
+### Requirements
 
-The easiest way to install Tooner is using our installation script:
+- Python 3.8+
+- pip (Python package manager)
+- Claude Code CLI
+
+### Automatic Installation (Recommended)
+
+Run this one command to install everything:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/mostafamoq/tooner/main/install.sh | bash
 ```
 
-Or if you've cloned the repository:
+Or from the repository:
 
 ```bash
 git clone https://github.com/mostafamoq/tooner.git
@@ -56,30 +62,35 @@ cd tooner
 ./install.sh
 ```
 
-The installer will:
-- ✅ Create the necessary directories
-- ✅ Download and install the hook file
-- ✅ Configure your `settings.json` automatically
-- ✅ Set proper file permissions
-- ✅ Backup your existing settings
+**What it does:**
+1. ✅ Installs the official `toon-python` library
+2. ✅ Downloads and installs the hook file
+3. ✅ Configures your `settings.json` automatically
+4. ✅ Sets proper file permissions
+5. ✅ Backs up your existing settings
 
-**[→ Skip to Testing](#-testing-with-mcp-server-optional)**
+**[→ Skip to Testing](#testing-the-installation)**
 
 ---
 
-### Option 2: Manual Installation
+### Manual Installation
 
 If you prefer to install manually:
 
-#### Step 1: Copy the hook file
+#### Step 1: Install toon-python library
+```bash
+pip install toon-python
+```
+
+#### Step 2: Download and install the hook file
 ```bash
 mkdir -p ~/.claude/hooks
 curl -o ~/.claude/hooks/compress_prompt.py \
-  https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt_standalone.py
+  https://raw.githubusercontent.com/mostafamoq/tooner/main/hooks/compress_prompt.py
 chmod +x ~/.claude/hooks/compress_prompt.py
 ```
 
-#### Step 2: Configure Claude Code
+#### Step 3: Configure Claude Code
 
 Edit or create `~/.claude/settings.json`:
 ```json
@@ -139,8 +150,10 @@ If the hook isn't working:
 
 2. **Test the hook manually:**
    ```bash
-   echo '{"prompt": "Test [{\"id\": 1}]"}' | ~/.claude/hooks/compress_prompt.py
+   printf '{"prompt": "Test [{\\"id\\": 1, \\"name\\": \\"Alice\\"}, {\\"id\\": 2, \\"name\\": \\"Bob\\"}, {\\"id\\": 3, \\"name\\": \\"Carol\\"}]"}' | ~/.claude/hooks/compress_prompt.py
    ```
+
+   You should see compressed output with token savings.
 
 3. **Check the log file:**
    ```bash
@@ -234,11 +247,12 @@ pytest tests/ -v
 ```
 tooner/
 ├── hooks/
-│   └── compress_prompt.py      # Main hook - automatic JSON compression
+│   └── compress_prompt.py      # Main hook - uses toon-python library
 ├── src/tooner/
 │   └── server.py              # MCP test server (optional, for testing)
 ├── tests/
 │   └── test_server.py         # Test suite
+├── install.sh                 # Auto-installer (installs toon-python + hook)
 ├── Dockerfile                 # Docker container (for MCP test server)
 ├── docker-compose.yml         # Docker Compose config (for testing)
 └── pyproject.toml            # Python project metadata
@@ -266,9 +280,10 @@ Toon is a token-efficient serialization format designed for LLMs:
 The Claude Code hook:
 1. Intercepts your prompt before sending to LLM
 2. Detects JSON arrays using regex
-3. Analyzes if compression would save >10% tokens
-4. Compresses uniform arrays to Toon format
-5. Logs activity to `~/.claude/tooner_hook.log`
+3. Analyzes if compression would save >30% tokens
+4. Uses the official `toon-python` library to compress uniform arrays
+5. Adds compression metadata (original vs compressed tokens)
+6. Logs activity to `~/.claude/tooner_hook.log`
 
 ## 🤝 Contributing
 
@@ -307,6 +322,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 🙏 Acknowledgments
 
 - [Toon Format](https://github.com/toon-format/toon) - The efficient serialization format
+- [toon-python](https://github.com/toon-format/toon-python) - Official Python implementation
 - [Model Context Protocol](https://modelcontextprotocol.io/) - MCP specification
 - [Anthropic Claude](https://www.anthropic.com/claude) - AI assistant platform
 
