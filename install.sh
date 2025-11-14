@@ -40,48 +40,59 @@ echo -e "${GREEN}✓${RESET} Created $HOOKS_DIR"
 echo ""
 echo -e "${BOLD}Step 2:${RESET} Installing toon-python library..."
 
-# Find pip command
-if command -v pip3 &> /dev/null; then
-    PIP_CMD="pip3"
-elif command -v pip &> /dev/null; then
-    PIP_CMD="pip"
+# Check Python version
+PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')" 2>/dev/null)
+PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d. -f1)
+PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
+
+echo -e "Detected Python ${PYTHON_VERSION}"
+
+# toon-python requires Python 3.10+
+if [ "$PYTHON_MAJOR" -lt 3 ] || ([ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 10 ]); then
+    echo -e "${YELLOW}⚠ Python ${PYTHON_VERSION} detected, but toon-python requires Python 3.10+${RESET}"
+    echo -e "${YELLOW}⚠ Hook will be installed but compression will be disabled${RESET}"
+    echo -e ""
+    echo -e "${BOLD}To enable compression, upgrade Python:${RESET}"
+    echo -e "  ${YELLOW}brew install python@3.13${RESET}  # macOS"
+    echo -e "  ${YELLOW}sudo apt install python3.13${RESET}  # Ubuntu/Debian"
+    echo -e ""
+    # Continue installation without toon-python
 else
-    echo -e "${RED}Error: pip is required but not found${RESET}"
-    exit 1
-fi
+    # Find pip command
+    if command -v pip3 &> /dev/null; then
+        PIP_CMD="pip3"
+    elif command -v pip &> /dev/null; then
+        PIP_CMD="pip"
+    else
+        echo -e "${RED}Error: pip is required but not found${RESET}"
+        exit 1
+    fi
 
-# Upgrade pip first to ensure package index is up to date
-echo -e "Updating pip..."
-$PIP_CMD install --upgrade pip --user -q 2>/dev/null || true
+    # Upgrade pip first to ensure package index is up to date
+    echo -e "Updating pip..."
+    $PIP_CMD install --upgrade pip --user -q 2>/dev/null || true
 
-# Try different installation methods
-echo -e "Installing official toon-python library..."
+    # Try different installation methods
+    echo -e "Installing official toon-python library..."
 
-# Try 1: User install (works on externally-managed environments)
-if $PIP_CMD install --user -q toon-python 2>/dev/null; then
-    echo -e "${GREEN}✓${RESET} toon-python library installed (user mode)"
-# Try 2: Standard install
-elif $PIP_CMD install -q toon-python 2>/dev/null; then
-    echo -e "${GREEN}✓${RESET} toon-python library installed"
-# Try 3: Break system packages (for stubborn externally-managed environments)
-elif $PIP_CMD install --break-system-packages -q toon-python 2>/dev/null; then
-    echo -e "${GREEN}✓${RESET} toon-python library installed (system packages)"
-else
-    echo -e "${RED}Error: Failed to install toon-python${RESET}"
-    echo -e ""
-    echo -e "${YELLOW}Your system blocks pip installation.${RESET}"
-    echo -e "${YELLOW}Please try manually:${RESET}"
-    echo -e ""
-    echo -e "  ${BOLD}Step 1 - Upgrade pip:${RESET}"
-    echo -e "    pip3 install --upgrade pip --user"
-    echo -e ""
-    echo -e "  ${BOLD}Step 2 - Install toon-python:${RESET}"
-    echo -e "    pip3 install --user toon-python"
-    echo -e ""
-    echo -e "  ${BOLD}Alternative:${RESET}"
-    echo -e "    pip3 install --break-system-packages toon-python"
-    echo -e ""
-    exit 1
+    # Try 1: User install (works on externally-managed environments)
+    if $PIP_CMD install --user -q toon-python 2>/dev/null; then
+        echo -e "${GREEN}✓${RESET} toon-python library installed (user mode)"
+    # Try 2: Standard install
+    elif $PIP_CMD install -q toon-python 2>/dev/null; then
+        echo -e "${GREEN}✓${RESET} toon-python library installed"
+    # Try 3: Break system packages (for stubborn externally-managed environments)
+    elif $PIP_CMD install --break-system-packages -q toon-python 2>/dev/null; then
+        echo -e "${GREEN}✓${RESET} toon-python library installed (system packages)"
+    else
+        echo -e "${YELLOW}⚠ Failed to install toon-python${RESET}"
+        echo -e "${YELLOW}⚠ Hook will be installed but compression will be disabled${RESET}"
+        echo -e ""
+        echo -e "${BOLD}Try manually:${RESET}"
+        echo -e "  ${YELLOW}pip3 install --upgrade pip --user${RESET}"
+        echo -e "  ${YELLOW}pip3 install --user toon-python${RESET}"
+        echo -e ""
+    fi
 fi
 
 echo ""

@@ -42,11 +42,13 @@ data[3]{id,name,role,status}:
 
 ### Requirements
 
-- Python 3.8+
-- pip or pipx (Python package manager)
+- **Python 3.10+** (required for toon-python library)
+- pip (Python package manager)
 - Claude Code CLI
 
-**Note:** The installer automatically handles externally-managed Python environments using `pip --user`, which works on all systems.
+**Note:**
+- The installer automatically handles externally-managed Python environments using `pip --user`
+- If you have Python < 3.10, the installer will warn you and skip compression (hook still installs but won't compress)
 
 ### Automatic Installation (Recommended)
 
@@ -164,17 +166,32 @@ pip install --user toon-python
 
 **"Could not find a version that satisfies the requirement" error:**
 
-This means your pip package index is outdated. Update pip first:
+This usually means one of two things:
 
-```bash
-# Step 1: Upgrade pip
-pip3 install --upgrade pip --user
+1. **Your pip package index is outdated** - Update pip first:
+   ```bash
+   pip3 install --upgrade pip --user
+   pip3 install --user toon-python
+   ```
 
-# Step 2: Install toon-python
-pip3 install --user toon-python
-```
+2. **Your Python version is too old** - Check your version:
+   ```bash
+   python3 --version
+   ```
 
-The automatic installer does this for you.
+   If it's below 3.10, you need to upgrade Python:
+   ```bash
+   # macOS
+   brew install python@3.13
+
+   # Ubuntu/Debian
+   sudo apt install python3.13
+
+   # Then use the new Python
+   python3.13 -m pip install --user toon-python
+   ```
+
+The automatic installer detects your Python version and warns you if it's too old.
 
 **Hook not working:**
 
