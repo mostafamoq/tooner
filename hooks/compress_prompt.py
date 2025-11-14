@@ -12,16 +12,67 @@ When it detects JSON data, it automatically compresses it to Toon format.
 import json
 import sys
 import re
+import subprocess
 from pathlib import Path
 from typing import Any, List, Dict, Tuple
 
+# Auto-detect if we need to switch to a different Python interpreter
+def find_python_with_toon():
+    """
+    Find a Python interpreter that has toon-python installed.
+    Returns the path to the interpreter or None.
+    """
+    # Try common Python locations
+    python_candidates = [
+        '/opt/homebrew/bin/python3',  # Homebrew on macOS (Apple Silicon)
+        '/usr/local/bin/python3',      # Homebrew on macOS (Intel)
+        '/usr/bin/python3',            # System Python
+        'python3.13',                  # Version-specific
+        'python3.12',
+        'python3.11',
+        'python3.10',
+    ]
+
+    for python_path in python_candidates:
+        try:
+            result = subprocess.run(
+                [python_path, '-c', 'import toon_python; print("OK")'],
+                capture_output=True,
+                text=True,
+                timeout=2
+            )
+            if result.returncode == 0 and "OK" in result.stdout:
+                return python_path
+        except (subprocess.TimeoutExpired, FileNotFoundError, PermissionError):
+            continue
+
+    return None
+
+# If toon_python is not available in current interpreter, try to re-exec with correct one
 try:
     from toon_python import encode
     TOON_AVAILABLE = True
 except ImportError:
+    # Try to find a Python that has toon-python
+    correct_python = find_python_with_toon()
+
+    if correct_python and correct_python != sys.executable:
+        # Re-execute this script with the correct Python
+        try:
+            result = subprocess.run(
+                [correct_python, __file__] + sys.argv[1:],
+                stdin=sys.stdin,
+                stdout=sys.stdout,
+                stderr=sys.stderr
+            )
+            sys.exit(result.returncode)
+        except Exception:
+            pass
+
+    # If we're still here, toon-python is not available
     TOON_AVAILABLE = False
-    print("[Tooner Hook] ERROR: toon-python not installed!", file=sys.stderr)
-    print("[Tooner Hook] Install with: pip install toon-python", file=sys.stderr)
+    # Don't print error to stderr - it's annoying. Just log it.
+    # The hook will gracefully pass through without compression.
 
 
 # ============================================================================
