@@ -162,6 +162,20 @@ pip install --user toon-python
 # This installs to your user directory and bypasses the externally-managed restriction
 ```
 
+**"Could not find a version that satisfies the requirement" error:**
+
+This means your pip package index is outdated. Update pip first:
+
+```bash
+# Step 1: Upgrade pip
+pip3 install --upgrade pip --user
+
+# Step 2: Install toon-python
+pip3 install --user toon-python
+```
+
+The automatic installer does this for you.
+
 **Hook not working:**
 
 1. **Check the hook file exists:**

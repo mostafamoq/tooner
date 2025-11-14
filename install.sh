@@ -50,6 +50,10 @@ else
     exit 1
 fi
 
+# Upgrade pip first to ensure package index is up to date
+echo -e "Updating pip..."
+$PIP_CMD install --upgrade pip --user -q 2>/dev/null || true
+
 # Try different installation methods
 echo -e "Installing official toon-python library..."
 
@@ -68,8 +72,14 @@ else
     echo -e "${YELLOW}Your system blocks pip installation.${RESET}"
     echo -e "${YELLOW}Please try manually:${RESET}"
     echo -e ""
-    echo -e "  ${BOLD}Option 1:${RESET} pip3 install --user toon-python"
-    echo -e "  ${BOLD}Option 2:${RESET} pip3 install --break-system-packages toon-python"
+    echo -e "  ${BOLD}Step 1 - Upgrade pip:${RESET}"
+    echo -e "    pip3 install --upgrade pip --user"
+    echo -e ""
+    echo -e "  ${BOLD}Step 2 - Install toon-python:${RESET}"
+    echo -e "    pip3 install --user toon-python"
+    echo -e ""
+    echo -e "  ${BOLD}Alternative:${RESET}"
+    echo -e "    pip3 install --break-system-packages toon-python"
     echo -e ""
     exit 1
 fi
