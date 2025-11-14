@@ -46,7 +46,7 @@ data[3]{id,name,role,status}:
 - pip or pipx (Python package manager)
 - Claude Code CLI
 
-**Note:** On macOS/Linux with externally-managed Python, the installer will use `pipx` automatically. Install it with: `brew install pipx` (macOS) or `sudo apt install pipx` (Linux)
+**Note:** The installer automatically handles externally-managed Python environments using `pip --user`, which works on all systems.
 
 ### Automatic Installation (Recommended)
 
@@ -81,17 +81,14 @@ If you prefer to install manually:
 
 #### Step 1: Install toon-python library
 
-**Using pipx (recommended for externally-managed Python):**
 ```bash
-pipx install toon-python
-```
-
-**Or using pip:**
-```bash
-pip install toon-python
-# If you get "externally-managed-environment" error, try:
+# Recommended: User installation (works on all systems)
 pip install --user toon-python
-# or
+
+# Or if --user doesn't work:
+pip install toon-python
+
+# Or for externally-managed environments:
 pip install --break-system-packages toon-python
 ```
 
@@ -156,23 +153,14 @@ tail -f ~/.claude/tooner_hook.log
 
 **"externally-managed-environment" error during installation:**
 
-This happens on modern macOS/Linux systems. Solutions:
+The automatic installer handles this by trying `pip --user` first. If you're installing manually and see this error:
 
-1. **Install pipx (recommended):**
-   ```bash
-   # macOS
-   brew install pipx
+```bash
+# Solution: Use --user flag
+pip install --user toon-python
 
-   # Linux
-   sudo apt install pipx  # Ubuntu/Debian
-   sudo yum install pipx  # RHEL/CentOS
-   ```
-   Then run the installer again.
-
-2. **Or use pip with --user flag:**
-   ```bash
-   pip install --user toon-python
-   ```
+# This installs to your user directory and bypasses the externally-managed restriction
+```
 
 **Hook not working:**
 
