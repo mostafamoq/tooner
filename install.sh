@@ -40,26 +40,51 @@ echo -e "${GREEN}✓${RESET} Created $HOOKS_DIR"
 echo ""
 echo -e "${BOLD}Step 2:${RESET} Installing toon-python library..."
 
-# Check if pip3 or pip is available
-if command -v pip3 &> /dev/null; then
-    PIP_CMD="pip3"
-elif command -v pip &> /dev/null; then
-    PIP_CMD="pip"
-else
-    echo -e "${RED}Error: pip is required but not found${RESET}"
-    exit 1
-fi
-
-# Install toon-python
-echo -e "Installing official toon-python library..."
-$PIP_CMD install -q toon-python || {
-    echo -e "${YELLOW}Warning: Failed to install globally, trying with --user${RESET}"
-    $PIP_CMD install --user -q toon-python || {
-        echo -e "${RED}Error: Failed to install toon-python${RESET}"
-        exit 1
+# Check for pipx first (recommended for externally-managed environments)
+if command -v pipx &> /dev/null; then
+    echo -e "Installing via pipx (recommended for system Python)..."
+    pipx install toon-python --force &> /dev/null || {
+        # pipx might already have it, try to upgrade
+        pipx upgrade toon-python &> /dev/null || true
     }
-}
-echo -e "${GREEN}✓${RESET} toon-python library installed"
+    echo -e "${GREEN}✓${RESET} toon-python library installed via pipx"
+else
+    # Fallback to pip
+    if command -v pip3 &> /dev/null; then
+        PIP_CMD="pip3"
+    elif command -v pip &> /dev/null; then
+        PIP_CMD="pip"
+    else
+        echo -e "${RED}Error: pip or pipx is required but not found${RESET}"
+        echo -e "${YELLOW}Install pipx with: brew install pipx (macOS) or apt install pipx (Linux)${RESET}"
+        exit 1
+    fi
+
+    # Try different installation methods
+    echo -e "Installing official toon-python library..."
+
+    # Try 1: Standard install
+    if $PIP_CMD install -q toon-python 2>/dev/null; then
+        echo -e "${GREEN}✓${RESET} toon-python library installed"
+    # Try 2: User install
+    elif $PIP_CMD install --user -q toon-python 2>/dev/null; then
+        echo -e "${GREEN}✓${RESET} toon-python library installed (user mode)"
+    # Try 3: Break system packages (for externally-managed environments)
+    elif $PIP_CMD install --break-system-packages -q toon-python 2>/dev/null; then
+        echo -e "${GREEN}✓${RESET} toon-python library installed (system packages)"
+    else
+        echo -e "${RED}Error: Failed to install toon-python${RESET}"
+        echo -e ""
+        echo -e "${YELLOW}Your system uses an externally-managed Python environment.${RESET}"
+        echo -e "${YELLOW}Please install pipx and try again:${RESET}"
+        echo -e ""
+        echo -e "  ${BOLD}macOS:${RESET}   brew install pipx"
+        echo -e "  ${BOLD}Linux:${RESET}   sudo apt install pipx  # or yum install pipx"
+        echo -e ""
+        echo -e "Then run the installer again."
+        exit 1
+    fi
+fi
 
 echo ""
 echo -e "${BOLD}Step 3:${RESET} Downloading hook file..."

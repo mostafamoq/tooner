@@ -43,8 +43,10 @@ data[3]{id,name,role,status}:
 ### Requirements
 
 - Python 3.8+
-- pip (Python package manager)
+- pip or pipx (Python package manager)
 - Claude Code CLI
+
+**Note:** On macOS/Linux with externally-managed Python, the installer will use `pipx` automatically. Install it with: `brew install pipx` (macOS) or `sudo apt install pipx` (Linux)
 
 ### Automatic Installation (Recommended)
 
@@ -78,8 +80,19 @@ cd tooner
 If you prefer to install manually:
 
 #### Step 1: Install toon-python library
+
+**Using pipx (recommended for externally-managed Python):**
+```bash
+pipx install toon-python
+```
+
+**Or using pip:**
 ```bash
 pip install toon-python
+# If you get "externally-managed-environment" error, try:
+pip install --user toon-python
+# or
+pip install --break-system-packages toon-python
 ```
 
 #### Step 2: Download and install the hook file
@@ -141,26 +154,51 @@ tail -f ~/.claude/tooner_hook.log
 
 #### Troubleshooting
 
-If the hook isn't working:
+**"externally-managed-environment" error during installation:**
+
+This happens on modern macOS/Linux systems. Solutions:
+
+1. **Install pipx (recommended):**
+   ```bash
+   # macOS
+   brew install pipx
+
+   # Linux
+   sudo apt install pipx  # Ubuntu/Debian
+   sudo yum install pipx  # RHEL/CentOS
+   ```
+   Then run the installer again.
+
+2. **Or use pip with --user flag:**
+   ```bash
+   pip install --user toon-python
+   ```
+
+**Hook not working:**
 
 1. **Check the hook file exists:**
    ```bash
    ls -la ~/.claude/hooks/compress_prompt.py
    ```
 
-2. **Test the hook manually:**
+2. **Verify toon-python is installed:**
+   ```bash
+   python3 -c "import toon_python; print('toon-python installed')"
+   ```
+
+3. **Test the hook manually:**
    ```bash
    printf '{"prompt": "Test [{\\"id\\": 1, \\"name\\": \\"Alice\\"}, {\\"id\\": 2, \\"name\\": \\"Bob\\"}, {\\"id\\": 3, \\"name\\": \\"Carol\\"}]"}' | ~/.claude/hooks/compress_prompt.py
    ```
 
    You should see compressed output with token savings.
 
-3. **Check the log file:**
+4. **Check the log file:**
    ```bash
    cat ~/.claude/tooner_hook.log
    ```
 
-4. **Verify settings.json syntax:**
+5. **Verify settings.json syntax:**
    ```bash
    python3 -m json.tool ~/.claude/settings.json
    ```
