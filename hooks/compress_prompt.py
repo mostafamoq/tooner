@@ -136,17 +136,22 @@ def should_compress(data: Any, min_items: int = 3) -> bool:
     if not is_uniform_array(data):
         return False
 
-    # Calculate potential savings using official library
-    json_str = json.dumps(data)
-    toon_str = json_to_toon_official(data)
+    try:
+        # Calculate potential savings using official library
+        json_str = json.dumps(data)
+        toon_str = json_to_toon_official(data)
 
-    json_tokens = estimate_tokens(json_str)
-    toon_tokens = estimate_tokens(toon_str)
+        json_tokens = estimate_tokens(json_str)
+        toon_tokens = estimate_tokens(toon_str)
 
-    savings_percent = ((json_tokens - toon_tokens) / json_tokens * 100) if json_tokens > 0 else 0
+        savings_percent = ((json_tokens - toon_tokens) / json_tokens * 100) if json_tokens > 0 else 0
 
-    # Only compress if savings > 30%
-    return savings_percent > 30
+        # Only compress if savings > 30%
+        return savings_percent > 30
+    except Exception as e:
+        # If anything fails during compression check, don't compress
+        log_to_file(f"Error checking compression viability: {e}")
+        return False
 
 
 def compress_prompt(prompt_text: str, min_items: int = 3) -> Tuple[str, bool, Dict]:
@@ -232,6 +237,9 @@ def main():
 
     Reads prompt from stdin, compresses JSON if found, outputs modified prompt.
     """
+    input_data = None
+    original_prompt = ""
+
     try:
         if not TOON_AVAILABLE:
             # Don't block the prompt, just log and exit
@@ -269,10 +277,13 @@ def main():
             sys.exit(0)
 
     except Exception as e:
-        # Log error but don't block
+        # Log error but don't block the prompt
         error_msg = f"Error: {e}"
         log_to_file(error_msg)
         print(f"[Tooner Hook] {error_msg}", file=sys.stderr)
+        # Return original prompt on any error (fail gracefully)
+        if original_prompt:
+            print(original_prompt)
         sys.exit(0)
 
 
